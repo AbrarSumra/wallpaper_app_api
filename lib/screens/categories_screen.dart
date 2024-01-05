@@ -46,12 +46,12 @@ class _CategoryScreenState extends State<CategoryScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Padding(
-              padding: EdgeInsets.only(left: 10, right: 10),
+            Padding(
+              padding: const EdgeInsets.only(left: 10, right: 10),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
+                  const Text(
                     "Nature",
                     style: TextStyle(
                       fontSize: 30,
@@ -59,8 +59,8 @@ class _CategoryScreenState extends State<CategoryScreen> {
                     ),
                   ),
                   Text(
-                    "36 Wallpaper available",
-                    style: TextStyle(fontSize: 15, color: Colors.grey),
+                    "${wallpaperModel!.photos!.length} Wallpaper available",
+                    style: const TextStyle(fontSize: 18, color: Colors.grey),
                   ),
                 ],
               ),

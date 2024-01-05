@@ -8,14 +8,14 @@ import 'package:http/http.dart' as https;
 
 import 'theme_screen.dart';
 
-class WallPaperScreen extends StatefulWidget {
-  const WallPaperScreen({super.key});
+class MainScreen extends StatefulWidget {
+  const MainScreen({super.key});
 
   @override
-  State<WallPaperScreen> createState() => _WallPaperScreenState();
+  State<MainScreen> createState() => _MainScreenState();
 }
 
-class _WallPaperScreenState extends State<WallPaperScreen> {
+class _MainScreenState extends State<MainScreen> {
   TextEditingController searchWallpaper = TextEditingController();
 
   WallpaperModel? wallpaperModel;
@@ -53,10 +53,6 @@ class _WallPaperScreenState extends State<WallPaperScreen> {
               padding: const EdgeInsets.all(20),
               child: TextFormField(
                 controller: searchWallpaper,
-                onChanged: (query) {
-                  //query = searchWallpaper.toString();
-                  setState(() {});
-                },
                 decoration: InputDecoration(
                   fillColor: Colors.white,
                   focusColor: Colors.transparent,
