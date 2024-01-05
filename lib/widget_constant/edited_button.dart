@@ -5,6 +5,7 @@ class EditedButton extends StatelessWidget {
     super.key,
     required this.icon,
     required this.name,
+    required this.heroTag,
     this.btnColor = Colors.white38,
     this.iconColor = Colors.black,
     this.onTap,
@@ -15,12 +16,14 @@ class EditedButton extends StatelessWidget {
   final Color btnColor;
   final Color iconColor;
   final VoidCallback? onTap;
+  final String? heroTag;
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
         FloatingActionButton(
+          heroTag: heroTag,
           onPressed: onTap,
           backgroundColor: btnColor,
           child: Icon(

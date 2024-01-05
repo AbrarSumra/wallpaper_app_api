@@ -4,7 +4,7 @@ import 'package:wscube_wallpaper_app/widget_constant/edited_button.dart';
 
 class ThemeScreen extends StatefulWidget {
   const ThemeScreen({super.key, required this.imageUrl});
-  final String imageUrl;
+  final String? imageUrl;
 
   @override
   State<ThemeScreen> createState() => _ThemeScreen();
@@ -36,7 +36,7 @@ class _ThemeScreen extends State<ThemeScreen> {
         alignment: Alignment.bottomCenter,
         children: [
           Image.network(
-            widget.imageUrl,
+            widget.imageUrl!,
             height: 900,
             fit: BoxFit.fitHeight,
             width: double.infinity,
@@ -49,14 +49,17 @@ class _ThemeScreen extends State<ThemeScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   EditedButton(
+                    heroTag: "Info",
                     icon: CupertinoIcons.info_circle_fill,
                     name: "Info",
                   ),
                   EditedButton(
+                    heroTag: "Save",
                     icon: Icons.file_download_outlined,
                     name: "Save",
                   ),
                   EditedButton(
+                    heroTag: "Apply",
                     icon: CupertinoIcons.paintbrush,
                     btnColor: Colors.blue,
                     iconColor: Colors.white,

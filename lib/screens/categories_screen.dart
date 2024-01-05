@@ -14,12 +14,12 @@ class CategoryScreen extends StatefulWidget {
 }
 
 class _CategoryScreenState extends State<CategoryScreen> {
-  WallpaperModel? wallpaperModel;
+  Future<WallpaperModel?>? wallpaperModel;
 
   @override
   void initState() {
     super.initState();
-    getAllPhotos();
+    wallpaperModel = getAllPhotos();
   }
 
   @override
@@ -58,68 +58,83 @@ class _CategoryScreenState extends State<CategoryScreen> {
                       fontWeight: FontWeight.w900,
                     ),
                   ),
-                  Text(
-                    "${wallpaperModel!.photos!.length} Wallpaper available",
-                    style: const TextStyle(fontSize: 18, color: Colors.grey),
-                  ),
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(left: 10, right: 10),
-              child: Column(
-                children: [
-                  wallpaperModel != null && wallpaperModel!.photos!.isNotEmpty
-                      ? GridView.builder(
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          gridDelegate:
-                              const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
-                            childAspectRatio: 4 / 5,
-                          ),
-                          itemCount: wallpaperModel!.photos!.length,
-                          itemBuilder: (_, catIndex) {
-                            var catPhoto = wallpaperModel!
-                                .photos![catIndex].src!.landscape!;
-                            return InkWell(
-                              onTap: () {
-                                Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (ctx) => ThemeScreen(
-                                          imageUrl: catPhoto,
-                                        )));
-                              },
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Stack(
-                                  fit: StackFit.expand,
-                                  children: [
-                                    ClipRRect(
-                                      borderRadius: BorderRadius.circular(12),
-                                      child: Image.network(
-                                        catPhoto,
-                                        fit: BoxFit.cover,
-                                      ),
-                                    ),
-                                    Center(
-                                      child: Text(
-                                        wallpaperModel!
-                                            .photos![catIndex].photographer!,
-                                        style: const TextStyle(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.w900,
-                                          color: Colors.blue,
+                  FutureBuilder(
+                    future: wallpaperModel,
+                    builder: (_, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      } else {
+                        if (snapshot.hasError) {
+                          return Center(
+                            child: Text("Network error ${snapshot.error}"),
+                          );
+                        } else if (snapshot.hasData) {
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "${snapshot.data!.photos!.length} Wallpaper available",
+                                style: const TextStyle(
+                                    fontSize: 18, color: Colors.grey),
+                              ),
+                              GridView.builder(
+                                  shrinkWrap: true,
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  gridDelegate:
+                                      const SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: 2,
+                                    childAspectRatio: 4 / 5,
+                                  ),
+                                  itemCount: snapshot.data!.photos!.length,
+                                  itemBuilder: (_, catIndex) {
+                                    var catPhoto = snapshot.data!
+                                        .photos![catIndex].src!.landscape!;
+                                    return InkWell(
+                                      onTap: () {
+                                        Navigator.of(context)
+                                            .push(MaterialPageRoute(
+                                                builder: (ctx) => ThemeScreen(
+                                                      imageUrl: catPhoto,
+                                                    )));
+                                      },
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Stack(
+                                          fit: StackFit.expand,
+                                          children: [
+                                            ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(12),
+                                              child: Image.network(
+                                                catPhoto,
+                                                fit: BoxFit.cover,
+                                              ),
+                                            ),
+                                            Center(
+                                              child: Text(
+                                                snapshot.data!.photos![catIndex]
+                                                    .photographer!,
+                                                style: const TextStyle(
+                                                  fontSize: 18,
+                                                  fontWeight: FontWeight.w900,
+                                                  color: Colors.blue,
+                                                ),
+                                              ),
+                                            )
+                                          ],
                                         ),
                                       ),
-                                    )
-                                  ],
-                                ),
-                              ),
-                            );
-                          })
-                      : const Center(
-                          child: CircularProgressIndicator(),
-                        ),
+                                    );
+                                  }),
+                            ],
+                          );
+                        }
+                      }
+                      return Container();
+                    },
+                  )
                 ],
               ),
             )
@@ -129,17 +144,21 @@ class _CategoryScreenState extends State<CategoryScreen> {
     );
   }
 
-  void getAllPhotos() async {
+  Future<WallpaperModel?> getAllPhotos(
+      {String query = "nature", String colorCode = ""}) async {
     var myApi = "sxkQNVewOd8AFlFs0P7xf1vpnVM7TdILxUROfB1h57qFspAhfFhx0evm";
-    var uri = Uri.parse("https://api.pexels.com/v1/search?query=nature");
+    var uri = Uri.parse(
+        "https://api.pexels.com/v1/search?query=$query&color=$colorCode");
     var response = await https.get(uri, headers: {
       "Authorization": myApi,
     });
 
     if (response.statusCode == 200) {
       var mData = jsonDecode(response.body);
-      wallpaperModel = WallpaperModel.fromJson(mData);
-      setState(() {});
+      var data = WallpaperModel.fromJson(mData);
+      return data;
+    } else {
+      return null;
     }
   }
 }
