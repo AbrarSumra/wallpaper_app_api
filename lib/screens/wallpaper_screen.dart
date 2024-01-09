@@ -102,18 +102,22 @@ class _WallpaperScreenState extends State<WallpaperScreen> {
           ),
           IconButton(
             onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (ctx) => BlocProvider(
-                    create: (context) => SearchWallBloc(apiHelper: ApiHelper()),
-                    child: SearchScreen(
-                      upcomingSearch: searchWallpaper.text.toString(),
-                      colorCode: "",
+              if (searchWallpaper.text.isNotEmpty) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (ctx) => BlocProvider(
+                      create: (context) =>
+                          SearchWallBloc(apiHelper: ApiHelper()),
+                      child: SearchScreen(
+                        upcomingSearch: searchWallpaper.text.toString(),
+                        colorCode: "",
+                      ),
                     ),
                   ),
-                ),
-              );
+                );
+              }
+              _focusNode.unfocus();
             },
             splashColor: Colors.red,
             icon: const Icon(
@@ -294,38 +298,28 @@ class _WallpaperScreenState extends State<WallpaperScreen> {
                               snapshot.data!.photos![catIndex].src!.landscape!;
                           return InkWell(
                             onTap: () {
-                              Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (ctx) => SearchScreen(
-                                        upcomingSearch:
-                                            searchWallpaper.text.toString(),
-                                        colorCode: null,
-                                      )));
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (ctx) => BlocProvider(
+                                    create: (context) =>
+                                        SearchWallBloc(apiHelper: ApiHelper()),
+                                    child: const SearchScreen(
+                                      upcomingSearch: "nature",
+                                      colorCode: "",
+                                    ),
+                                  ),
+                                ),
+                              );
                             },
                             child: Padding(
                               padding: const EdgeInsets.only(
                                   left: 5, right: 5, bottom: 10),
-                              child: Stack(
-                                fit: StackFit.expand,
-                                children: [
-                                  ClipRRect(
-                                    borderRadius: BorderRadius.circular(12),
-                                    child: Image.network(
-                                      catPhoto,
-                                      fit: BoxFit.cover,
-                                    ),
-                                  ),
-                                  Center(
-                                    child: Text(
-                                      snapshot.data!.photos![catIndex]
-                                          .photographer!,
-                                      style: const TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.w900,
-                                        color: Colors.blue,
-                                      ),
-                                    ),
-                                  )
-                                ],
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(12),
+                                child: Image.network(
+                                  catPhoto,
+                                  fit: BoxFit.cover,
+                                ),
                               ),
                             ),
                           );
