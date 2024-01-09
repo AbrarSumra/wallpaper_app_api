@@ -4,8 +4,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:wscube_wallpaper_app/bloc/wallpaper_bloc.dart';
+import 'package:wscube_wallpaper_app/data_source/remote/api_helper.dart';
 import 'package:wscube_wallpaper_app/modules/wallpaper_data_model.dart';
-import 'package:wscube_wallpaper_app/screens/categories_screen.dart';
+import 'package:wscube_wallpaper_app/screens/search/bloc/search_wall_bloc.dart';
+import 'package:wscube_wallpaper_app/screens/search/ui/search_screen.dart';
 import 'package:http/http.dart' as https;
 
 import '../modules/color_model.dart';
@@ -100,12 +102,18 @@ class _WallpaperScreenState extends State<WallpaperScreen> {
           ),
           IconButton(
             onPressed: () {
-              if (searchWallpaper.text.isNotEmpty) {
-                wallpaperModel =
-                    getAllPhotos(query: searchWallpaper.text.toString());
-                _focusNode.unfocus();
-                setState(() {});
-              }
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (ctx) => BlocProvider(
+                    create: (context) => SearchWallBloc(apiHelper: ApiHelper()),
+                    child: SearchScreen(
+                      upcomingSearch: searchWallpaper.text.toString(),
+                      colorCode: "",
+                    ),
+                  ),
+                ),
+              );
             },
             splashColor: Colors.red,
             icon: const Icon(
@@ -208,12 +216,18 @@ class _WallpaperScreenState extends State<WallpaperScreen> {
                     InkWell(
                       //splashColor: Colors.red,
                       onTap: () {
-                        if (searchWallpaper.text.isNotEmpty) {
-                          wallpaperModel = getAllPhotos(
-                              query: searchWallpaper.text.toString(),
-                              colorCode: colorList[index].colorCode!);
-                          setState(() {});
-                        }
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (ctx) => BlocProvider(
+                                      create: (context) => SearchWallBloc(
+                                          apiHelper: ApiHelper()),
+                                      child: SearchScreen(
+                                          upcomingSearch:
+                                              searchWallpaper.text.toString(),
+                                          colorCode:
+                                              colorList[index].colorCode),
+                                    )));
                       },
                       child: Container(
                         height: 50,
@@ -281,7 +295,11 @@ class _WallpaperScreenState extends State<WallpaperScreen> {
                           return InkWell(
                             onTap: () {
                               Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (ctx) => const CategoryScreen()));
+                                  builder: (ctx) => SearchScreen(
+                                        upcomingSearch:
+                                            searchWallpaper.text.toString(),
+                                        colorCode: null,
+                                      )));
                             },
                             child: Padding(
                               padding: const EdgeInsets.only(
