@@ -1,10 +1,7 @@
-import 'dart:convert';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:wscube_wallpaper_app/modules/wallpaper_data_model.dart';
-import 'package:http/http.dart' as https;
 import 'package:wscube_wallpaper_app/screens/search/bloc/search_wall_bloc.dart';
 import 'package:wscube_wallpaper_app/screens/theme_screen.dart';
 
@@ -25,7 +22,6 @@ class _SearchScreenState extends State<SearchScreen> {
   @override
   void initState() {
     super.initState();
-    //wallpaperModel = getAllPhotos();
     BlocProvider.of<SearchWallBloc>(context).add(GetSearchWallpaper(
         query: widget.upcomingSearch!, colorCode: widget.colorCode!));
   }
@@ -59,9 +55,9 @@ class _SearchScreenState extends State<SearchScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    "Nature",
-                    style: TextStyle(
+                  Text(
+                    widget.upcomingSearch.toString().toUpperCase(),
+                    style: const TextStyle(
                       fontSize: 30,
                       fontWeight: FontWeight.w900,
                     ),
@@ -107,28 +103,12 @@ class _SearchScreenState extends State<SearchScreen> {
                                 },
                                 child: Padding(
                                   padding: const EdgeInsets.all(8.0),
-                                  child: Stack(
-                                    fit: StackFit.expand,
-                                    children: [
-                                      ClipRRect(
-                                        borderRadius: BorderRadius.circular(12),
-                                        child: Image.network(
-                                          catPhoto,
-                                          fit: BoxFit.cover,
-                                        ),
-                                      ),
-                                      Center(
-                                        child: Text(
-                                          searchWallpaper!
-                                              .photos![catIndex].photographer!,
-                                          style: const TextStyle(
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.w900,
-                                            color: Colors.blue,
-                                          ),
-                                        ),
-                                      )
-                                    ],
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(12),
+                                    child: Image.network(
+                                      catPhoto,
+                                      fit: BoxFit.cover,
+                                    ),
                                   ),
                                 ),
                               );
@@ -146,23 +126,5 @@ class _SearchScreenState extends State<SearchScreen> {
         ),
       ),
     );
-  }
-
-  Future<WallpaperModel?> getAllPhotos(
-      {String query = "nature", String colorCode = ""}) async {
-    var myApi = "sxkQNVewOd8AFlFs0P7xf1vpnVM7TdILxUROfB1h57qFspAhfFhx0evm";
-    var uri = Uri.parse(
-        "https://api.pexels.com/v1/search?query=$query&color=$colorCode");
-    var response = await https.get(uri, headers: {
-      "Authorization": myApi,
-    });
-
-    if (response.statusCode == 200) {
-      var mData = jsonDecode(response.body);
-      var data = WallpaperModel.fromJson(mData);
-      return data;
-    } else {
-      return null;
-    }
   }
 }
