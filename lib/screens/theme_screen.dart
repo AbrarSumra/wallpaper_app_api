@@ -37,11 +37,10 @@ class _ThemeScreen extends State<ThemeScreen> {
         children: [
           Image.network(
             widget.imageUrl!,
-            height: 900,
             fit: BoxFit.fitHeight,
             width: double.infinity,
           ),
-          const Column(
+          Column(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               Row(
@@ -50,16 +49,19 @@ class _ThemeScreen extends State<ThemeScreen> {
                 children: [
                   EditedButton(
                     heroTag: "Info",
+                    onTap: () {},
                     icon: CupertinoIcons.info_circle_fill,
                     name: "Info",
                   ),
                   EditedButton(
                     heroTag: "Save",
+                    onTap: () {},
                     icon: Icons.file_download_outlined,
                     name: "Save",
                   ),
                   EditedButton(
                     heroTag: "Apply",
+                    onTap: () {},
                     icon: CupertinoIcons.paintbrush,
                     btnColor: Colors.blue,
                     iconColor: Colors.white,

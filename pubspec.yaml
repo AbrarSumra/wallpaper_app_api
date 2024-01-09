@@ -36,6 +36,7 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
   http: ^1.1.0
+  flutter_bloc: ^8.1.3
 
 dev_dependencies:
   flutter_test:
@@ -61,17 +62,7 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-    - assets/images/menu.png
-    - assets/images/blue-starry-sky-generative-ai_791316-12386.jpg.avif
-    - assets/images/fall-autumn-red-season.jpg
-    - assets/images/flowing-purple-mountain-spiral-bright-imagination-generated-by-ai_188544-9853.jpg.avif
-    - assets/images/images.jpeg
-    - assets/images/images-2.jpeg
-    - assets/images/images-3.jpeg
-    - assets/images/images-4.jpeg
-    - assets/images/images-5.jpg
-    - assets/images/images-6.jpeg
-    - assets/images/images-7.jpeg
+    - assets/images/
 
 
 

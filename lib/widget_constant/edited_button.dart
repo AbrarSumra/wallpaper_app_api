@@ -24,6 +24,7 @@ class EditedButton extends StatelessWidget {
       children: [
         FloatingActionButton(
           heroTag: heroTag,
+          splashColor: Colors.blue,
           onPressed: onTap,
           backgroundColor: btnColor,
           child: Icon(

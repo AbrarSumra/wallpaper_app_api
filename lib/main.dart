@@ -1,12 +1,18 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:wscube_wallpaper_app/screens/main_screen.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:wscube_wallpaper_app/bloc/wallpaper_bloc.dart';
+import 'package:wscube_wallpaper_app/data_source/remote/api_helper.dart';
+import 'package:wscube_wallpaper_app/screens/wallpaper_screen.dart';
 
 import 'screens/download_screen.dart';
 import 'screens/profile_screen.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(BlocProvider(
+    create: (context) => WallpaperBloc(apiHelper: ApiHelper()),
+    child: const MyApp(),
+  ));
 }
 
 class MyApp extends StatelessWidget {
@@ -37,7 +43,7 @@ class _HomeScreenState extends State<HomeScreen> {
   int _currentIndex = 0;
 
   final List<Widget> _screen = [
-    const MainScreen(),
+    const WallpaperScreen(),
     const DownloadScreen(),
     const ProfileScreen(),
   ];
