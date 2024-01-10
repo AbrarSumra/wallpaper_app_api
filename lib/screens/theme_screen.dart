@@ -14,7 +14,7 @@ class _ThemeScreen extends State<ThemeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
+      /* appBar: AppBar(
         backgroundColor: Colors.blue,
         title: const Text(
           "Theme Screen",
@@ -30,7 +30,7 @@ class _ThemeScreen extends State<ThemeScreen> {
               color: Colors.white,
               size: 30,
             )),
-      ),
+      ),*/
       body: Stack(
         fit: StackFit.expand,
         alignment: Alignment.bottomCenter,
@@ -38,7 +38,6 @@ class _ThemeScreen extends State<ThemeScreen> {
           Image.network(
             widget.imageUrl!,
             fit: BoxFit.fitHeight,
-            width: double.infinity,
           ),
           Column(
             mainAxisAlignment: MainAxisAlignment.end,

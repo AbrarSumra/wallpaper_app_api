@@ -35,6 +35,8 @@ class _SearchScreenState extends State<SearchScreen> {
 
   @override
   Widget build(BuildContext context) {
+    searchPhotos.text = widget.upcomingSearch!;
+
     List<ColorModel> colorList = [
       ColorModel(colorValue: Colors.white, colorCode: "ffffff"),
       ColorModel(colorValue: Colors.black, colorCode: "000000"),

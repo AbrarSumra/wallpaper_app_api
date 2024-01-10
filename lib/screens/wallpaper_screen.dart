@@ -36,6 +36,8 @@ class _WallpaperScreenState extends State<WallpaperScreen> {
 
   Future<void> _refreshData() async {
     await Future.delayed(const Duration(seconds: 1));
+    wallpaperModel = getAllPhotos();
+    BlocProvider.of<WallpaperBloc>(context).add(GetTrendingWallpaper());
     setState(() {});
   }
 
@@ -220,18 +222,20 @@ class _WallpaperScreenState extends State<WallpaperScreen> {
                     InkWell(
                       //splashColor: Colors.red,
                       onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (ctx) => BlocProvider(
-                                      create: (context) => SearchWallBloc(
-                                          apiHelper: ApiHelper()),
-                                      child: SearchScreen(
-                                          upcomingSearch:
-                                              searchWallpaper.text.toString(),
-                                          colorCode:
-                                              colorList[index].colorCode),
-                                    )));
+                        if (searchWallpaper.text.isNotEmpty) {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (ctx) => BlocProvider(
+                                        create: (context) => SearchWallBloc(
+                                            apiHelper: ApiHelper()),
+                                        child: SearchScreen(
+                                            upcomingSearch:
+                                                searchWallpaper.text.toString(),
+                                            colorCode:
+                                                colorList[index].colorCode),
+                                      )));
+                        }
                       },
                       child: Container(
                         height: 50,
