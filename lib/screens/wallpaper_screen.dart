@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -8,8 +6,9 @@ import 'package:wscube_wallpaper_app/data_source/remote/api_helper.dart';
 import 'package:wscube_wallpaper_app/modules/wallpaper_data_model.dart';
 import 'package:wscube_wallpaper_app/screens/search/bloc/search_wall_bloc.dart';
 import 'package:wscube_wallpaper_app/screens/search/ui/search_screen.dart';
-import 'package:http/http.dart' as https;
 
+import '../modules/all_constant_list.dart';
+import '../modules/category_model.dart';
 import '../modules/color_model.dart';
 import 'theme_screen.dart';
 
@@ -30,35 +29,17 @@ class _WallpaperScreenState extends State<WallpaperScreen> {
   @override
   void initState() {
     super.initState();
-    wallpaperModel = getAllPhotos();
     BlocProvider.of<WallpaperBloc>(context).add(GetTrendingWallpaper());
   }
 
   Future<void> _refreshData() async {
     await Future.delayed(const Duration(seconds: 1));
-    wallpaperModel = getAllPhotos();
     BlocProvider.of<WallpaperBloc>(context).add(GetTrendingWallpaper());
     setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
-    List<ColorModel> colorList = [
-      ColorModel(colorValue: Colors.white, colorCode: "ffffff"),
-      ColorModel(colorValue: Colors.black, colorCode: "000000"),
-      ColorModel(colorValue: Colors.blue, colorCode: "0000ff"),
-      ColorModel(colorValue: Colors.green, colorCode: "00ff00"),
-      ColorModel(colorValue: Colors.red, colorCode: "ff0000"),
-      ColorModel(colorValue: Colors.purple, colorCode: "9C27B0"),
-      ColorModel(colorValue: Colors.orange, colorCode: "FF9800"),
-    ];
-
-    List<String> categoryWallpaper = [
-      "https://img.freepik.com/free-photo/wide-angle-shot-single-tree-growing-clouded-sky-during-sunset-surrounded-by-grass_181624-22807.jpg",
-      "https://static.vecteezy.com/system/resources/thumbnails/022/006/295/small_2x/horse-on-the-field-illustration-ai-generative-free-photo.jpg",
-      "https://cdn.pixabay.com/photo/2020/09/06/07/37/car-5548242_640.jpg",
-    ];
-
     return Scaffold(
       backgroundColor: const Color.fromRGBO(215, 236, 237, 1),
       body: RefreshIndicator(
@@ -72,7 +53,7 @@ class _WallpaperScreenState extends State<WallpaperScreen> {
               searchBar(),
               bestOfMonth(),
               colorTone(colorList),
-              categoryWiseWallpaper(categoryWallpaper, categoryWallpaper),
+              categoryWiseWallpaper(categoryWallpaper),
             ],
           ),
         ),
@@ -112,18 +93,17 @@ class _WallpaperScreenState extends State<WallpaperScreen> {
             onPressed: () {
               if (searchWallpaper.text.isNotEmpty) {
                 Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (ctx) => BlocProvider(
-                      create: (context) =>
-                          SearchWallBloc(apiHelper: ApiHelper()),
-                      child: SearchScreen(
-                        upcomingSearch: searchWallpaper.text.toString(),
-                        colorCode: "",
+                    context,
+                    MaterialPageRoute(
+                      builder: (ctx) => BlocProvider(
+                        create: (context) =>
+                            SearchWallBloc(apiHelper: ApiHelper()),
+                        child: SearchScreen(
+                          upcomingSearch: searchWallpaper.text.toString(),
+                          colorCode: "",
+                        ),
                       ),
-                    ),
-                  ),
-                );
+                    ));
               }
               _focusNode.unfocus();
             },
@@ -164,36 +144,36 @@ class _WallpaperScreenState extends State<WallpaperScreen> {
               } else if (state is WallpaperLoadedState) {
                 var loadPhoto = state.loadedData;
                 return ListView.builder(
-                  itemCount: loadPhoto.photos!.length,
-                  scrollDirection: Axis.horizontal,
-                  itemBuilder: (BuildContext ctx, index) {
-                    var photo = loadPhoto.photos![index].src!.portrait!;
-                    return Row(
-                      children: [
-                        SizedBox(
-                          height: 200,
-                          width: 150,
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(12),
-                            child: InkWell(
-                              onTap: () {
-                                Navigator.of(context).push(MaterialPageRoute(
+                    itemCount: loadPhoto.photos!.length,
+                    scrollDirection: Axis.horizontal,
+                    itemBuilder: (BuildContext ctx, index) {
+                      var photo = loadPhoto.photos![index].src!.portrait!;
+                      return Row(
+                        children: [
+                          SizedBox(
+                            height: 200,
+                            width: 150,
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(12),
+                              child: InkWell(
+                                onTap: () {
+                                  Navigator.of(context).push(MaterialPageRoute(
                                     builder: (ctx) => ThemeScreen(
-                                          imageUrl: photo,
-                                        )));
-                              },
-                              child: Image.network(
-                                photo,
-                                fit: BoxFit.cover,
+                                      imageUrl: photo,
+                                    ),
+                                  ));
+                                },
+                                child: Image.network(
+                                  photo,
+                                  fit: BoxFit.cover,
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                        const SizedBox(width: 15)
-                      ],
-                    );
-                  },
-                );
+                          const SizedBox(width: 15)
+                        ],
+                      );
+                    });
               }
               return Container();
             }),
@@ -220,43 +200,43 @@ class _WallpaperScreenState extends State<WallpaperScreen> {
           child: SizedBox(
             height: 60,
             child: ListView.builder(
-              itemCount: colorList.length,
-              scrollDirection: Axis.horizontal,
-              itemBuilder: (BuildContext ctx, index) {
-                return Row(
-                  children: [
-                    InkWell(
-                      //splashColor: Colors.red,
-                      onTap: () {
-                        if (searchWallpaper.text.isNotEmpty) {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (ctx) => BlocProvider(
-                                        create: (context) => SearchWallBloc(
-                                            apiHelper: ApiHelper()),
-                                        child: SearchScreen(
-                                            upcomingSearch:
-                                                searchWallpaper.text.toString(),
-                                            colorCode:
-                                                colorList[index].colorCode),
-                                      )));
-                        }
-                      },
-                      child: Container(
-                        height: 50,
-                        width: 50,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(12),
-                          color: colorList[index].colorValue,
+                itemCount: colorList.length,
+                scrollDirection: Axis.horizontal,
+                itemBuilder: (BuildContext ctx, index) {
+                  return Row(
+                    children: [
+                      InkWell(
+                        //splashColor: Colors.red,
+                        onTap: () {
+                          if (searchWallpaper.text.isNotEmpty) {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (ctx) => BlocProvider(
+                                          create: (context) => SearchWallBloc(
+                                              apiHelper: ApiHelper()),
+                                          child: SearchScreen(
+                                              upcomingSearch: searchWallpaper
+                                                  .text
+                                                  .toString(),
+                                              colorCode:
+                                                  colorList[index].colorCode),
+                                        )));
+                          }
+                        },
+                        child: Container(
+                          height: 50,
+                          width: 50,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(12),
+                            color: colorList[index].colorValue,
+                          ),
                         ),
                       ),
-                    ),
-                    const SizedBox(width: 15)
-                  ],
-                );
-              },
-            ),
+                      const SizedBox(width: 15)
+                    ],
+                  );
+                }),
           ),
         ),
       ],
@@ -264,7 +244,7 @@ class _WallpaperScreenState extends State<WallpaperScreen> {
   }
 
   /// Category Wise Wallpaper
-  Widget categoryWiseWallpaper(List<String> name, List<String> imgUrl) {
+  Widget categoryWiseWallpaper(List<CategoryModel> catModel) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -276,111 +256,62 @@ class _WallpaperScreenState extends State<WallpaperScreen> {
           ),
         ),
         Padding(
-            padding: const EdgeInsets.only(left: 20, right: 20),
-            child: GridView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  mainAxisSpacing: 11,
-                  crossAxisSpacing: 11,
-                  childAspectRatio: 6 / 4,
-                ),
-                itemCount: imgUrl.length,
-                itemBuilder: (_, catIndex) {
-                  return InkWell(
-                    onTap: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (ctx) => BlocProvider(
-                            create: (context) =>
-                                SearchWallBloc(apiHelper: ApiHelper()),
-                            child: const SearchScreen(
-                              upcomingSearch: "nature",
-                              colorCode: "",
-                            ),
-                          ),
-                        ),
-                      );
-                    },
-                    child: Padding(
-                      padding:
-                          const EdgeInsets.only(left: 5, right: 5, bottom: 10),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(12),
-                        child: Image.network(
-                          imgUrl[catIndex],
-                          fit: BoxFit.cover,
+          padding: const EdgeInsets.only(left: 20, right: 20),
+          child: GridView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                childAspectRatio: 6 / 4,
+              ),
+              itemCount: catModel.length,
+              itemBuilder: (_, catIndex) {
+                return InkWell(
+                  onTap: () {
+                    Navigator.of(context).push(MaterialPageRoute(
+                      builder: (ctx) => BlocProvider(
+                        create: (context) =>
+                            SearchWallBloc(apiHelper: ApiHelper()),
+                        child: SearchScreen(
+                          upcomingSearch: catModel[catIndex].imgName,
+                          colorCode: "",
                         ),
                       ),
-                    ),
-                  );
-                })
-
-            /*FutureBuilder<WallpaperModel?>(
-            future: wallpaperModel,
-            builder: (_, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
-              } else if (snapshot.hasError) {
-                return Center(
-                  child: Text("Network error ${snapshot.error.toString()}"),
-                );
-              } else if (snapshot.hasData) {
-                return GridView.builder(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      mainAxisSpacing: 11,
-                      crossAxisSpacing: 11,
-                      childAspectRatio: 6 / 4,
-                    ),
-                    itemCount: snapshot.data!.photos!.length,
-                    itemBuilder: (_, catIndex) {
-                      var catPhoto =
-                          snapshot.data!.photos![catIndex].src!.landscape!;
-                      return InkWell(
-                        onTap: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (ctx) => BlocProvider(
-                                create: (context) =>
-                                    SearchWallBloc(apiHelper: ApiHelper()),
-                                child: const SearchScreen(
-                                  upcomingSearch: "nature",
-                                  colorCode: "",
-                                ),
-                              ),
-                            ),
-                          );
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.only(
-                              left: 5, right: 5, bottom: 10),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(12),
-                            child: Image.network(
-                              catPhoto,
-                              fit: BoxFit.cover,
+                    ));
+                  },
+                  child: Padding(
+                    padding:
+                        const EdgeInsets.only(left: 5, right: 5, bottom: 10),
+                    child: Stack(
+                      children: [
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(12),
+                          child: Image.network(
+                            catModel[catIndex].imgUrl,
+                            fit: BoxFit.fill,
+                          ),
+                        ),
+                        Center(
+                          child: Text(
+                            catModel[catIndex].imgName,
+                            style: const TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
                             ),
                           ),
                         ),
-                      );
-                    });
-              }
-              return Container();
-            },
-          ),*/
-            ),
+                      ],
+                    ),
+                  ),
+                );
+              }),
+        ),
       ],
     );
   }
 
-  /// All Photos
+  /*/// All Photos
   Future<WallpaperModel?> getAllPhotos(
       {String query = "nature", String colorCode = ""}) async {
     var myApi = "sxkQNVewOd8AFlFs0P7xf1vpnVM7TdILxUROfB1h57qFspAhfFhx0evm";
@@ -397,5 +328,5 @@ class _WallpaperScreenState extends State<WallpaperScreen> {
     } else {
       return null;
     }
-  }
+  }*/
 }
