@@ -273,6 +273,7 @@ class _WallpaperScreenState extends State<WallpaperScreen> {
                         create: (context) =>
                             SearchWallBloc(apiHelper: ApiHelper()),
                         child: SearchScreen(
+                          isCategory: true,
                           upcomingSearch: catModel[catIndex].imgName,
                           colorCode: "",
                         ),

@@ -17,8 +17,8 @@ class SearchWallBloc extends Bloc<SearchWallEvent, SearchWallState> {
       emit(SearchWallLoadingState());
 
       try {
-        var mainUrl = event.query.isNotEmpty
-            ? "${Urls.SEARCH_WALLPAPER_URL}?query=${event.query}&color=${event.colorCode}"
+        var mainUrl = event.query!.isNotEmpty
+            ? "${Urls.SEARCH_WALLPAPER_URL}?query=${event.query}&color=${event.colorCode}&page=${event.page}"
             : "${Urls.SEARCH_WALLPAPER_URL}?query=${event.colorCode}";
 
         var rawData = await apiHelper.getApi(mainUrl);
