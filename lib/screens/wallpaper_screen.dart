@@ -53,6 +53,12 @@ class _WallpaperScreenState extends State<WallpaperScreen> {
       ColorModel(colorValue: Colors.orange, colorCode: "FF9800"),
     ];
 
+    List<String> categoryWallpaper = [
+      "https://img.freepik.com/free-photo/wide-angle-shot-single-tree-growing-clouded-sky-during-sunset-surrounded-by-grass_181624-22807.jpg",
+      "https://static.vecteezy.com/system/resources/thumbnails/022/006/295/small_2x/horse-on-the-field-illustration-ai-generative-free-photo.jpg",
+      "https://cdn.pixabay.com/photo/2020/09/06/07/37/car-5548242_640.jpg",
+    ];
+
     return Scaffold(
       backgroundColor: const Color.fromRGBO(215, 236, 237, 1),
       body: RefreshIndicator(
@@ -66,7 +72,7 @@ class _WallpaperScreenState extends State<WallpaperScreen> {
               searchBar(),
               bestOfMonth(),
               colorTone(colorList),
-              categoryWiseWallpaper(),
+              categoryWiseWallpaper(categoryWallpaper, categoryWallpaper),
             ],
           ),
         ),
@@ -258,7 +264,7 @@ class _WallpaperScreenState extends State<WallpaperScreen> {
   }
 
   /// Category Wise Wallpaper
-  Widget categoryWiseWallpaper() {
+  Widget categoryWiseWallpaper(List<String> name, List<String> imgUrl) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -270,71 +276,106 @@ class _WallpaperScreenState extends State<WallpaperScreen> {
           ),
         ),
         Padding(
-          padding: const EdgeInsets.only(left: 20, right: 20),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              FutureBuilder<WallpaperModel?>(
-                future: wallpaperModel,
-                builder: (_, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  } else if (snapshot.hasError) {
-                    return Center(
-                      child: Text("Network error ${snapshot.error.toString()}"),
-                    );
-                  } else if (snapshot.hasData) {
-                    return GridView.builder(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          mainAxisSpacing: 11,
-                          crossAxisSpacing: 11,
-                          childAspectRatio: 6 / 4,
+            padding: const EdgeInsets.only(left: 20, right: 20),
+            child: GridView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  mainAxisSpacing: 11,
+                  crossAxisSpacing: 11,
+                  childAspectRatio: 6 / 4,
+                ),
+                itemCount: imgUrl.length,
+                itemBuilder: (_, catIndex) {
+                  return InkWell(
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (ctx) => BlocProvider(
+                            create: (context) =>
+                                SearchWallBloc(apiHelper: ApiHelper()),
+                            child: const SearchScreen(
+                              upcomingSearch: "nature",
+                              colorCode: "",
+                            ),
+                          ),
                         ),
-                        itemCount: snapshot.data!.photos!.length,
-                        itemBuilder: (_, catIndex) {
-                          var catPhoto =
-                              snapshot.data!.photos![catIndex].src!.landscape!;
-                          return InkWell(
-                            onTap: () {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (ctx) => BlocProvider(
-                                    create: (context) =>
-                                        SearchWallBloc(apiHelper: ApiHelper()),
-                                    child: const SearchScreen(
-                                      upcomingSearch: "nature",
-                                      colorCode: "",
-                                    ),
-                                  ),
-                                ),
-                              );
-                            },
-                            child: Padding(
-                              padding: const EdgeInsets.only(
-                                  left: 5, right: 5, bottom: 10),
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(12),
-                                child: Image.network(
-                                  catPhoto,
-                                  fit: BoxFit.cover,
+                      );
+                    },
+                    child: Padding(
+                      padding:
+                          const EdgeInsets.only(left: 5, right: 5, bottom: 10),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: Image.network(
+                          imgUrl[catIndex],
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                  );
+                })
+
+            /*FutureBuilder<WallpaperModel?>(
+            future: wallpaperModel,
+            builder: (_, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              } else if (snapshot.hasError) {
+                return Center(
+                  child: Text("Network error ${snapshot.error.toString()}"),
+                );
+              } else if (snapshot.hasData) {
+                return GridView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      mainAxisSpacing: 11,
+                      crossAxisSpacing: 11,
+                      childAspectRatio: 6 / 4,
+                    ),
+                    itemCount: snapshot.data!.photos!.length,
+                    itemBuilder: (_, catIndex) {
+                      var catPhoto =
+                          snapshot.data!.photos![catIndex].src!.landscape!;
+                      return InkWell(
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (ctx) => BlocProvider(
+                                create: (context) =>
+                                    SearchWallBloc(apiHelper: ApiHelper()),
+                                child: const SearchScreen(
+                                  upcomingSearch: "nature",
+                                  colorCode: "",
                                 ),
                               ),
                             ),
                           );
-                        });
-                  }
-                  return Container();
-                },
-              ),
-            ],
-          ),
-        ),
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.only(
+                              left: 5, right: 5, bottom: 10),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(12),
+                            child: Image.network(
+                              catPhoto,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                      );
+                    });
+              }
+              return Container();
+            },
+          ),*/
+            ),
       ],
     );
   }
